@@ -1,5 +1,82 @@
 extends layout
 
+block navbar
+  p.navbar-text.navbar-right(style="margin-right: 0") {{ updateSince }}
+
 block content
-  h1= title
-  p Welcome to #{title}
+  .table-responsive
+    table.table.table-striped.table-hover.table-condensed.table-bordered.text-center
+      thead
+        tr
+          th.text-center
+            i.fa.fa-male(style="visibility: hidden;")
+          th.text-center name
+          th.text-center github
+          th.text-center port
+          th.text-center.text-success
+            i.fa.fa-check-circle-o
+          - var pNo = 1
+          while pNo < 12
+            th.text-center(style="width:1%", title=problems[pNo-1])=pNo++
+        tr(v-for="user in users", :key="user.mid")
+          td
+            i.fa.fa-male(v-if="user.owned === '1'")
+          td(:title="user.mid") {{ user.name || user.mid }}
+          td
+            a(target="_blank", v-if="user.github", :href="'https://github.com/' + user.github") {{ user.github }}
+          td {{ user.port || ' ' }}
+          td {{ user.completed.length }}
+          td(:class="~user.completed.indexOf(i) ? 'success' : (i === user.current ? 'warning' : '')", v-for="i in 11")
+            i.fa.fa-check-circle-o.fa-fw(v-if="~user.completed.indexOf(i)")
+            i.fa.fa-spinner.fa-spin.fa-fw(v-else-if="i === user.current")
+        tr(v-if="users.length===0")
+          td(colspan="16") 無資料
+  h3
+    | 連線指令：
+    code ssh root@{{ domain }} -p [port]
+
+block script
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js")
+  if env.NODE_ENV === 'development'
+    script localStorage.debug = 'socket.io-client:socket'
+  script.
+    moment.locale('zh-tw')
+    // https://momentjs.com/docs/#/customization/relative-time-threshold/
+    moment.relativeTimeThreshold('s', 60)
+    moment.relativeTimeThreshold('m', 60)
+    moment.relativeTimeThreshold('h', 24)
+    moment.relativeTimeThreshold('ss', -1)
+    moment.updateLocale('zh-tw', {
+      relativeTime: {
+        ss: '%d 秒'
+      }
+    })
+    var socket = io.connect('/');
+    socket.on('pongtest', () => {
+      console.log('pongtest');
+    });
+
+    var vm = new Vue({
+      el: '#app',
+      data: {
+        users: [],
+        updateAt: null,
+        now: null
+      },
+      computed: {
+        domain() {
+          return location.hostname;
+        },
+        updateSince() {
+          return _.isNil(this.updateAt) ? '更新失敗' : '最後更新：大約 ' + this.updateAt.from(this.now)
+        }
+      },
+      mounted () {
+        setInterval(() => {this.now = moment()}, 1000);
+      }
+    });
+
+    socket.on('dashboard', dashboard => {
+      vm.users = dashboard
+      vm.updateAt = moment()
+    })

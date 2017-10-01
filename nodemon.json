@@ -1,0 +1,13 @@
+{
+  "restartable": "rs",
+  "ignore": [],
+  "verbose": true,
+  "execMap": {
+    "js": "yarn run start"
+  },
+  "env": {
+    "DEBUG": "socket.io:*,dashboard:*",
+    "NODE_ENV": "development"
+  },
+  "ext": "js json pug"
+}

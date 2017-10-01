@@ -1,7 +1,65 @@
 doctype html
-html
+html.han-init(lang="zh-Hant-TW")
   head
+    meta(charset="UTF-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge")
+    meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
     title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-  body
-    block content
+    //- link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css')
+    link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap-theme.min.css')
+    link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css')
+    link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/Han/3.3.0/han.min.css')
+    style.
+      i.fa {
+        font-family: FontAwesome;
+      }
+      body {
+        padding-bottom: 70px;
+      }
+      [v-cloak] {
+        display: none;
+      }
+    block style
+  body(lang="zh-Hant-TW")
+    #app(v-cloak)
+      nav.navbar.navbar-inverse.navbar-static-top
+        .container-fluid
+          .navbar-header
+            button.navbar-toggle.collapsed(type="button", data-toggle="collapse", data-target="#scoreboard-navbar-collapse", aria-expanded="false")
+              span.sr-only Toggle navigation
+              span.icon-bar
+              span.icon-bar
+              span.icon-bar
+            a.navbar-brand(href="#")=title
+
+          .collapse.navbar-collapse#scoreboard-navbar-collapse
+            ul.nav.navbar-nav
+              li
+                a(target="_blank", href="https://github.com/taichunmin/git-it-course-docker/blob/master/student.md")
+                  i.fa.fa-star-o.fa-fw
+                  |  學員說明
+              li
+                a(target="_blank", href="http://jlord.us/git-it/index-zhtw.html")
+                  i.fa.fa-book.fa-fw
+                  |  git-it 教學
+              li
+                a(target="_blank", href="https://try.github.io/")
+                  i.fa.fa-level-up.fa-fw
+                  |  進階：Try Git
+              li
+                a(target="_blank", href="https://learngitbranching.js.org/")
+                  i.fa.fa-code-fork.fa-fw
+                  |  進階：學習 Git 分支
+              block navbar-ul
+            block navbar
+      .container
+        block content
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/Han/3.3.0/han.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.4/vue.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/locale/zh-tw.js")
+    block script
