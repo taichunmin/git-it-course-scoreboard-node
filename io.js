@@ -1,8 +1,6 @@
 'use strict'
-var io = require('socket.io')()
+const io = require('socket.io')()
 
-io.on('connection', function (socket) {
-  require('./ioRoutes/index')(socket)
-})
+io.on('connection', require('./ioRoutes/index'))
 
 module.exports = io

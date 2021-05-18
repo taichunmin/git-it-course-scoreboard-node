@@ -1,23 +1,28 @@
 #!/usr/bin/env node
 'use strict'
 
-// DEBUG=* yarn run portsUpdate
-if (require.main === module) {
-  /**
-   * load dotenv
-   */
-  require('dotenv').config()
+/**
+ * load dotenv
+ */
+require('dotenv').config()
 
-  /**
-   * Module dependencies.
-   */
-  const log = require('debug')('dashboard:bin/portsUpdate')
-  const UserRepo = require('../repos/UserRepo')
-  const DockerApi = require('../repos/DockerApi')
+/**
+ * Module dependencies.
+ */
+const log = require('debug')('dashboard:bin/portsUpdate')
+const UserRepo = require('../repos/UserRepo')
+const DockerApi = require('../repos/DockerApi')
 
-  DockerApi.getAllClientSshPorts()
-    .tap(log)
-    .then(ports => UserRepo.portsUpdate(ports))
-    .catch(log)
-    .finally(() => process.exit())
+async function main () {
+  try {
+    const ports = await DockerApi.getAllClientSshPorts()
+    log(ports)
+    await UserRepo.portsUpdate(ports)
+    process.exit()
+  } catch (err) {
+    log(err)
+  }
 }
+
+// DEBUG=* yarn run portsUpdate
+if (require.main === module) main()

@@ -1,5 +1,5 @@
-var express = require('express')
-var router = express.Router()
+const express = require('express')
+const router = express.Router()
 const UserRepo = require('../repos/UserRepo')
 const DockerApi = require('../repos/DockerApi')
 const log = require('debug')('dashboard:route/index')
@@ -15,37 +15,41 @@ const problems = [
   "IT'S A SMALL WORLD",
   'PULL, NEVER OUT OF DATE',
   'REQUESTING YOU PULL, PLEASE',
-  'MERGE TADA!'
+  'MERGE TADA!',
 ]
 
 /* GET home page. */
-router.get('/', function (req, res, next) {
+router.get('/', async (req, res, next) => {
   res.render('index', {
     title: '課程儀表板',
-    problems
+    problems,
   })
 })
 
-router.post('/completed/update', function (req, res, next) {
-  log('/completed/update', req.body)
-  return UserRepo.update(req.body)
-    .then(() => UserRepo.isMidHasPort(req.body.mid))
-    .then(isMidHasPort => {
-      if (isMidHasPort === 1) return
-      return DockerApi.getAllClientSshPorts()
-        .tap(log)
-        .then(ports => UserRepo.portsUpdate(ports))
-    })
-    .then(() => res.json({result: 'OK'}))
+router.post('/completed/update', async (req, res, next) => {
+  try {
+    log('/completed/update', req.body)
+    await UserRepo.update(req.body)
+    const isMidHasPort = await UserRepo.isMidHasPort(req.body.mid)
+    if (!isMidHasPort) {
+      const ports = await DockerApi.getAllClientSshPorts()
+      log(ports)
+      await UserRepo.portsUpdate(ports)
+    }
+    res.json({ result: 'OK' })
+  } catch (err) {
+    next(err)
+  }
 })
 
-router.post('/ports/update', function (req, res, next) {
+router.post('/ports/update', async (req, res, next) => {
   log('/ports/update', req.body)
   try {
-    return UserRepo.portsUpdate(JSON.parse(req.body.ports))
-      .then(() => res.json({result: 'OK'}))
-  } catch (e) {
-    log(e)
+    await UserRepo.portsUpdate(JSON.parse(req.body.ports))
+    res.json({ result: 'OK' })
+  } catch (err) {
+    log(err)
+    next(err)
   }
 })
 

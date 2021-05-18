@@ -48,34 +48,34 @@ block script
     moment.relativeTimeThreshold('ss', -1)
     moment.updateLocale('zh-tw', {
       relativeTime: {
-        ss: '%d 秒'
-      }
+        ss: '%d 秒',
+      },
     })
-    var socket = io.connect('/');
+    const socket = io.connect('/')
     socket.on('pongtest', () => {
-      console.log('pongtest');
-    });
-
-    var vm = new Vue({
+      console.log('pongtest')
+    })
+    
+    const vm = new Vue({
       el: '#app',
       data: {
         users: [],
         updateAt: null,
-        now: null
+        now: null,
       },
       computed: {
-        domain() {
-          return location.hostname;
+        domain () {
+          return location.hostname
         },
-        updateSince() {
+        updateSince () {
           return _.isNil(this.updateAt) ? '更新失敗' : '最後更新：大約 ' + this.updateAt.from(this.now)
-        }
+        },
       },
       mounted () {
-        setInterval(() => {this.now = moment()}, 1000);
-      }
-    });
-
+        setInterval(() => { this.now = moment() }, 1000)
+      },
+    })
+    
     socket.on('dashboard', dashboard => {
       vm.users = dashboard
       vm.updateAt = moment()
